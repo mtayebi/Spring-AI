@@ -39,6 +39,19 @@ The server application is responsible for:
 
 ---
 
+## Technologies
+
+- Java 21
+- Spring Boot
+- Spring AI
+- Model Context Protocol (MCP)
+- Maven
+- Database integration
+- REST or MCP communication
+- Git and GitHub
+
+---
+
 ## Request Flow
 
 ```text
@@ -66,18 +79,4 @@ Database
   v
 Result returned to the user
 
----
-
-## Technologies
-
-- Java 21
-- Spring Boot
-- Spring AI
-- Model Context Protocol (MCP)
-- Maven
-- Database integration
-- REST or MCP communication
-- Git and GitHub
-
----
 
