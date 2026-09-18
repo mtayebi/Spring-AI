@@ -12,6 +12,11 @@ The AI analyzes the request, determines which banking operation is needed, and s
 
 ---
 
+## Project Preview
+
+![Spring AI Banking Assistant](Home.png)
+
+
 ## Project Architecture
 
 This project consists of two separate Spring Boot applications:
