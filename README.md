@@ -70,7 +70,7 @@ Result returned to the user
 
 ## Technologies
 
-- Java 17+
+- Java 21
 - Spring Boot
 - Spring AI
 - Model Context Protocol (MCP)
