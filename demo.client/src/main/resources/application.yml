@@ -1,0 +1,33 @@
+server:
+  port: 1011
+
+spring:
+  application:
+    name: client
+  ai:
+    anthropic:
+      api-key: "freellmapi-332e68a12fd13b07af76a063777a1721e8b81689810b1626"
+      base-url: "http://localhost:3001"
+      chat:
+        options:
+          model: "auto"
+    mcp:
+      server:
+        protocol: STREAMABLE
+
+      client:
+        streamable-http:
+          connections:
+            AI-server:
+              url: "http://localhost:1010/mcp"
+
+
+history:
+  chat:
+    id: 123456789fkljfk
+
+#logging:
+#  level:
+#    org.springframework.ai.chat.client.advisor: DEBUG
+#  file:
+#    name: ./logs/ai-chat.log

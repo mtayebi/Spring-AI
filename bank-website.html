@@ -1,0 +1,306 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Bank Assistant</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            color: #1f2937;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: #172554;
+            color: white;
+            padding: 25px;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .header h1 {
+            margin: 0 0 8px;
+        }
+
+        .header p {
+            margin: 0;
+            opacity: 0.85;
+        }
+
+        .chat {
+            background: white;
+            min-height: 450px;
+            padding: 25px;
+            border-left: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+        }
+
+        .message {
+            padding: 14px 18px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            max-width: 80%;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .user {
+            background: #dbeafe;
+            margin-left: auto;
+        }
+
+        .assistant {
+            background: #f1f5f9;
+            margin-right: auto;
+        }
+
+        .input-area {
+            background: white;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 0 0 12px 12px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 90px;
+            resize: vertical;
+            padding: 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        button:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .examples {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .loading {
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>🏦 AI Bank Assistant</h1>
+        <p>Spring AI + MCP Demo</p>
+    </div>
+
+    <div id="chat" class="chat">
+
+        <div class="message assistant">
+            Hello! I'm your AI banking assistant.
+
+            You can ask me things like:
+            • What is my account balance?
+            • Show my last 5 transactions.
+            • What is my account number and balance?
+            • Show my recent transactions and calculate the total spending.
+        </div>
+
+    </div>
+
+    <div class="input-area">
+
+        <textarea
+                id="message"
+                placeholder="Ask something about your bank account..."
+        ></textarea>
+
+        <div class="actions">
+
+            <span class="examples">
+                One message → multiple AI actions → one response
+            </span>
+
+            <button id="sendButton" onclick="sendMessage()">
+                Send
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    const API_URL = "http://localhost:1011/api/bank/request";
+
+    async function sendMessage() {
+
+        const input = document.getElementById("message");
+        const button = document.getElementById("sendButton");
+        const chat = document.getElementById("chat");
+
+        const message = input.value.trim();
+
+        if (!message) {
+            return;
+        }
+
+        // Show user message
+        addMessage(message, "user");
+
+        // Clear input
+        input.value = "";
+
+        // Disable button
+        button.disabled = true;
+        button.innerText = "Processing...";
+
+        // Loading message
+        const loading = addMessage(
+            "AI is processing your request...",
+            "assistant loading"
+        );
+
+        try {
+
+            const response = await fetch(API_URL, {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    message: message
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(
+                    "Server returned HTTP " + response.status
+                );
+            }
+
+            const data = await response.json();
+
+            // Remove loading message
+            loading.remove();
+
+            /*
+             * Expected backend response:
+             *
+             * {
+             *     "message": "Your balance is $5,000..."
+             * }
+             */
+
+            addMessage(
+                data.message ?? "No response received.",
+                "assistant"
+            );
+
+        } catch (error) {
+
+            loading.remove();
+
+            addMessage(
+                "Unable to connect to the banking system.\n\n" +
+                error.message,
+                "assistant error"
+            );
+
+        } finally {
+
+            button.disabled = false;
+            button.innerText = "Send";
+        }
+    }
+
+
+    function addMessage(text, type) {
+
+        const chat = document.getElementById("chat");
+
+        const message = document.createElement("div");
+
+        message.className = "message " + type;
+
+        message.textContent = text;
+
+        chat.appendChild(message);
+
+        chat.scrollTop = chat.scrollHeight;
+
+        return message;
+    }
+
+
+    // Send with Ctrl + Enter
+    document
+        .getElementById("message")
+        .addEventListener("keydown", function(event) {
+
+            if (event.ctrlKey && event.key === "Enter") {
+                sendMessage();
+            }
+
+        });
+
+</script>
+
+</body>
+</html>
+
