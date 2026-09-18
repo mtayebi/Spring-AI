@@ -65,3 +65,19 @@ Database
   |
   v
 Result returned to the user
+
+---
+
+## Technologies
+
+- Java 17+
+- Spring Boot
+- Spring AI
+- Model Context Protocol (MCP)
+- Maven
+- Database integration
+- REST or MCP communication
+- Git and GitHub
+
+---
+
